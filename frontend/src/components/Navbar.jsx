@@ -64,13 +64,23 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
           {user ? (
             <div className="flex items-center gap-2">
-              <div style={{
+              <Link to="/profile" style={{
+                display: 'flex', alignItems: 'center', gap: 8,
                 padding: '6px 14px', borderRadius: 8,
                 background: 'var(--bg-card)', border: '1px solid var(--border)',
                 fontSize: '0.85rem', color: 'var(--text-secondary)',
-              }}>
-                👤 {user.fullName?.split(' ')[0]}
-              </div>
+                textDecoration: 'none', transition: 'border-color 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-1)'}
+              onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}>
+                <div style={{
+                  width: 22, height: 22, borderRadius: '50%',
+                  background: 'var(--gradient)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '0.7rem', fontWeight: 700, color: '#fff',
+                }}>{user.fullName?.[0]?.toUpperCase()}</div>
+                {user.fullName?.split(' ')[0]}
+              </Link>
               <button onClick={handleLogout} className="btn btn-ghost btn-sm">Logout</button>
             </div>
           ) : (

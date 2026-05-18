@@ -1,8 +1,9 @@
 const router = require('express').Router();
-const { submitCode, getMySubmissions } = require('../controllers/submission.controller');
+const { submitCode, getMySubmissions, runCode } = require('../controllers/submission.controller');
 const auth = require('../middleware/auth.middleware');
 
-router.post('/', auth, submitCode);
-router.get('/my', auth, getMySubmissions);
+router.post('/',    auth, submitCode);
+router.post('/run', auth, runCode);       // Run against public examples — no DB save
+router.get('/my',   auth, getMySubmissions);
 
 module.exports = router;

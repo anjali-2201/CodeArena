@@ -16,15 +16,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-const authRoutes = require('./routes/auth.routes');
-const problemRoutes = require('./routes/problem.routes');
-const submissionRoutes = require('./routes/submission.routes');
+const authRoutes        = require('./routes/auth.routes');
+const problemRoutes     = require('./routes/problem.routes');
+const submissionRoutes  = require('./routes/submission.routes');
 const leaderboardRoutes = require('./routes/leaderboard.routes');
+const profileRoutes     = require('./routes/profile.routes');
 
-app.use('/api/auth', authRoutes);
-app.use('/api/problems', problemRoutes);
+app.use('/api/auth',        authRoutes);
+app.use('/api/problems',    problemRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/profile',     profileRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -142,3 +142,83 @@ exports.getMySubmissions = async (req, res) => {
     });
   }
 };
+
+/**
+ * POST /api/submissions/run
+ * Execute code against the problem's PUBLIC sample examples only.
+ * Results are NOT saved to DB — does not affect stats or leaderboard.
+ */
+exports.runCode = async (req, res) => {
+  try {
+    const { problemId, language, code } = req.body;
+
+    if (!problemId || !language || !code) {
+      return res.status(400).json({
+        success: false,
+        message: 'Problem ID, language, and code are required.',
+      });
+    }
+
+    const validLanguages = ['cpp', 'python', 'java', 'javascript'];
+    if (!validLanguages.includes(language)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid language. Supported: ${validLanguages.join(', ')}`,
+      });
+    }
+
+    const problem = await Problem.findById(problemId);
+    if (!problem) {
+      return res.status(404).json({ success: false, message: 'Problem not found.' });
+    }
+
+    const examples = problem.examples || [];
+    if (examples.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No sample test cases available for this problem.',
+      });
+    }
+
+    const results = [];
+    for (let i = 0; i < examples.length; i++) {
+      const ex = examples[i];
+      const result = await compileAndRun(language, code, ex.input);
+
+      if (!result.success) {
+        results.push({
+          index:          i + 1,
+          input:          ex.input,
+          expectedOutput: ex.output,
+          actualOutput:   result.output || '',
+          verdict:        result.verdict,
+          passed:         false,
+        });
+        if (result.verdict === 'Compilation Error') break;
+        continue;
+      }
+
+      const expected = normalizeOutput(ex.output);
+      const actual   = normalizeOutput(result.output);
+      const passed   = actual === expected;
+
+      results.push({
+        index:          i + 1,
+        input:          ex.input,
+        expectedOutput: ex.output,
+        actualOutput:   result.output,
+        verdict:        passed ? 'Passed' : 'Wrong Answer',
+        passed,
+      });
+    }
+
+    const allPassed = results.every((r) => r.passed);
+
+    res.json({ success: true, allPassed, results });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Run failed.',
+    });
+  }
+};

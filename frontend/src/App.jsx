@@ -8,6 +8,7 @@ import Signup from './pages/Signup';
 import Problems from './pages/Problems';
 import ProblemDetail from './pages/ProblemDetail';
 import Leaderboard from './pages/Leaderboard';
+import Profile from './pages/Profile';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -31,6 +32,9 @@ export default function App() {
           <ProtectedRoute><ProblemDetail /></ProtectedRoute>
         } />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/profile" element={
+          <ProtectedRoute><Profile /></ProtectedRoute>
+        } />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
