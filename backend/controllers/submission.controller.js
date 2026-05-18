@@ -4,6 +4,23 @@ const Problem = require('../models/Problem');
 const { compileAndRun } = require('../compiler');
 
 /**
+ * Normalize output for comparison:
+ * - Convert \r\n and \r to \n
+ * - Strip trailing spaces from each line
+ * - Trim surrounding blank lines
+ * This ensures verdicts are correct regardless of OS line endings.
+ */
+const normalizeOutput = (str) =>
+  str
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .split('\n')
+    .map((line) => line.trimEnd())
+    .join('\n')
+    .trim();
+
+
+/**
  * POST /api/submissions — submit code for judging
  */
 exports.submitCode = async (req, res) => {
@@ -59,13 +76,14 @@ exports.submitCode = async (req, res) => {
         break;
       }
 
-      // Compare output (normalize whitespace)
-      const expectedOutput = tc.output.trim();
-      const actualOutput = result.output.trim();
+      // Normalize both sides before comparing — handles \r\n vs \n, trailing
+      // spaces per line, and leading/trailing blank lines.
+      const expectedOutput = normalizeOutput(tc.output);
+      const actualOutput   = normalizeOutput(result.output);
 
       if (actualOutput !== expectedOutput) {
         verdict = 'Wrong Answer';
-        failedOutput = `Test Case ${i + 1}: Expected "${expectedOutput}", Got "${actualOutput}"`;
+        failedOutput = `Test Case ${i + 1}:\nExpected:\n${expectedOutput}\n\nGot:\n${actualOutput}`;
         break;
       }
     }

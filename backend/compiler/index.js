@@ -13,6 +13,21 @@ if (!fs.existsSync(TEMP_DIR)) {
 const TIME_LIMIT = 10000; // 10 seconds
 
 /**
+ * Normalize output: convert \r\n → \n, trim each line's trailing spaces,
+ * then trim the whole string. This prevents false Wrong Answer verdicts
+ * caused by OS-level line-ending differences (Windows vs Linux).
+ */
+function normalizeOutput(output) {
+  return output
+    .replace(/\r\n/g, '\n')   // Windows CRLF → LF
+    .replace(/\r/g, '\n')     // old Mac CR → LF
+    .split('\n')
+    .map((line) => line.trimEnd()) // strip trailing spaces per line
+    .join('\n')
+    .trim();                   // strip leading/trailing blank lines
+}
+
+/**
  * Clean up temporary files after execution
  */
 function cleanup(files) {
@@ -79,7 +94,7 @@ async function runCpp(code, input) {
     // Run
     const output = await executeWithTimeout(`"${exeFile}"`, input);
     cleanup(filesToClean);
-    return { success: true, output: output.trim() };
+    return { success: true, output: normalizeOutput(output) };
   } catch (error) {
     cleanup(filesToClean);
     if (error.type === 'TLE') {
@@ -105,7 +120,7 @@ async function runPython(code, input) {
     fs.writeFileSync(srcFile, code);
     const output = await executeWithTimeout(`python "${srcFile}"`, input);
     cleanup(filesToClean);
-    return { success: true, output: output.trim() };
+    return { success: true, output: normalizeOutput(output) };
   } catch (error) {
     cleanup(filesToClean);
     if (error.type === 'TLE') {
@@ -152,7 +167,7 @@ async function runJava(code, input) {
       input
     );
     cleanup(filesToClean);
-    return { success: true, output: output.trim() };
+    return { success: true, output: normalizeOutput(output) };
   } catch (error) {
     cleanup(filesToClean);
     if (error.type === 'TLE') {
@@ -186,7 +201,7 @@ ${code}
     fs.writeFileSync(srcFile, wrappedCode);
     const output = await executeWithTimeout(`node "${srcFile}"`, input);
     cleanup(filesToClean);
-    return { success: true, output: output.trim() };
+    return { success: true, output: normalizeOutput(output) };
   } catch (error) {
     cleanup(filesToClean);
     if (error.type === 'TLE') {
