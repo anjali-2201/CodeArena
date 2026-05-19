@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema(
     dob: { type: Date, required: [true, 'Date of birth is required'] },
 
     // ── RBAC ──────────────────────────────────────────────────────────
-    role: { type: String, enum: ['user', 'admin'], default: 'user', index: true },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
 
     // ── Streak tracking ───────────────────────────────────────────────
     streak:        { type: Number, default: 0 },
@@ -52,8 +52,9 @@ const userSchema = new mongoose.Schema(
 );
 
 // ── Indexes ────────────────────────────────────────────────────────────
-userSchema.index({ email: 1 });
+// email unique index is already enforced by the field's `unique: true`
 userSchema.index({ role: 1 });
+userSchema.index({ createdAt: -1 });
 
 // ── Hash password before save ─────────────────────────────────────────
 userSchema.pre('save', async function (next) {

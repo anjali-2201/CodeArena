@@ -13,7 +13,7 @@ async function initRedis() {
     return;
   }
 
-  try {
+    try {
     const Redis = require('ioredis');
     redis = new Redis({
       host:           process.env.REDIS_HOST     || 'localhost',
@@ -25,15 +25,19 @@ async function initRedis() {
       retryStrategy: () => null, // don't retry — fail fast
     });
 
+    // Suppress unhandled 'error' events that ioredis emits after a failed connect
+    redis.on('error', () => {});
+
     await redis.connect();
     await redis.ping();
     available = true;
     logger.info('[Cache] Redis connected successfully.');
   } catch (err) {
-    redis     = null;
+    if (redis) { redis.disconnect(); redis = null; }
     available = false;
     logger.warn('[Cache] Redis unavailable — running without cache:', err.message);
   }
+
 }
 
 /**
