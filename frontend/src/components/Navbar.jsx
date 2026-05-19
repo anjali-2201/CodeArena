@@ -18,8 +18,9 @@ export default function Navbar() {
   const handleLogout = () => { logout(); navigate('/'); };
 
   const navLinks = [
-    { to: '/', label: 'Home' },
-    { to: '/problems', label: 'Problems' },
+    { to: '/',            label: 'Home' },
+    { to: '/problems',   label: 'Problems' },
+    { to: '/contests',   label: 'Contests' },
     { to: '/leaderboard', label: 'Leaderboard' },
   ];
 

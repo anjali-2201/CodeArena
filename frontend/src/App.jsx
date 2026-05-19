@@ -9,6 +9,8 @@ import Problems from './pages/Problems';
 import ProblemDetail from './pages/ProblemDetail';
 import Leaderboard from './pages/Leaderboard';
 import Profile from './pages/Profile';
+import Contests from './pages/Contests';
+import ContestDetail from './pages/ContestDetail';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -32,6 +34,8 @@ export default function App() {
           <ProtectedRoute><ProblemDetail /></ProtectedRoute>
         } />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/contests" element={<Contests />} />
+        <Route path="/contests/:id" element={<ContestDetail />} />
         <Route path="/profile" element={
           <ProtectedRoute><Profile /></ProtectedRoute>
         } />

@@ -1,24 +1,7 @@
 const TestCase = require('../models/TestCase');
 const Solution = require('../models/Solution');
-const Problem = require('../models/Problem');
-const { compileAndRun } = require('../compiler');
-
-/**
- * Normalize output for comparison:
- * - Convert \r\n and \r to \n
- * - Strip trailing spaces from each line
- * - Trim surrounding blank lines
- * This ensures verdicts are correct regardless of OS line endings.
- */
-const normalizeOutput = (str) =>
-  str
-    .replace(/\r\n/g, '\n')
-    .replace(/\r/g, '\n')
-    .split('\n')
-    .map((line) => line.trimEnd())
-    .join('\n')
-    .trim();
-
+const Problem  = require('../models/Problem');
+const { compileAndRun, normalizeOutput } = require('../services/executor');
 
 /**
  * POST /api/submissions — submit code for judging
