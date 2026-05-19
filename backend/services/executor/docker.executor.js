@@ -13,7 +13,7 @@ const CPU_LIMIT      = process.env.EXEC_CPU_LIMIT  || '0.5';
 const IMAGES = {
   cpp:        'gcc:12',
   python:     'python:3.11-slim',
-  java:       'openjdk:17-slim',
+  java:       'eclipse-temurin:17-jdk-alpine',
   javascript: 'node:20-slim',
 };
 
