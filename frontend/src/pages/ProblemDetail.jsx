@@ -40,11 +40,23 @@ public class Solution {
         // Write your solution here
     }
 }`,
-  javascript: `const lines = input.split('\\n');
-let idx = 0;
+  javascript: `// Input is available via three equivalent patterns — pick whichever you prefer:
+//
+//   Pattern 1: readline()  — pop one line at a time (most common in CP)
+//     const n = parseInt(readline());
+//     const arr = readline().split(' ').map(Number);
+//
+//   Pattern 2: lines[]  — indexed access to all lines at once
+//     const n = parseInt(lines[0]);
+//     const arr = lines[1].split(' ').map(Number);
+//
+//   Pattern 3: input  — the full stdin string
+//     const [a, b] = input.trim().split('\\n').map(Number);
+//
+// All three variables are pre-loaded from stdin automatically.
 
-// Write your solution here
-// Use readline() to read lines, console.log() to output
+const n = parseInt(readline());
+console.log(n);
 `,
 };
 

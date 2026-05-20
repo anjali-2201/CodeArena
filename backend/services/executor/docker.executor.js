@@ -305,21 +305,54 @@ async function executePython(code, input, tmpDir) {
 
 /**
  * JavaScript executor  (interpreted — single phase)
- * Injects a readline() polyfill so competitive-style input works correctly.
+ *
+ * WHY WE USE fs.readFileSync(0) INSTEAD OF INJECTING A STRING LITERAL
+ * ───────────────────────────────────────────────────────────────────
+ * Old approach: bake the input into the source file as a JS string literal.
+ *   const _inp = "line1\nline2\n...";   ← injected by the runner
+ *
+ * Problems:
+ *   1. Large inputs (10^5+ lines) produce a multi-MB JS source file that is
+ *      slow for v8 to parse before a single line of user code runs.
+ *   2. Special characters (backslashes, quotes, null bytes) can corrupt the
+ *      literal or throw a SyntaxError before user code is reached.
+ *   3. Users who write `fs.readFileSync(0, 'utf8')` (the idiomatic Node.js
+ *      way to read stdin) would get an empty string, because stdin was never
+ *      actually written to — the data lived only in a JS variable.
+ *
+ * Correct approach:
+ *   • Write user code exactly as submitted — zero mutations.
+ *   • Pipe the real input bytes to the container's stdin via child.stdin
+ *     (already done in runExec — the `-i` flag keeps Docker's stdin open).
+ *   • Prepend a tiny preamble that synchronously drains stdin once into a
+ *     shared buffer, then exposes three helpers that cover every common
+ *     competitive-programming I/O pattern:
+ *
+ *       const input    = fs.readFileSync(0, 'utf8').trimEnd();  // full string
+ *       const lines    = input.split(/\r?\n/);                  // line array
+ *       function readline() { return lines[_rl++] ?? ''; }      // pop a line
+ *
+ * This works identically inside Docker (Linux) and in local child_process
+ * (Windows/Linux) because Node.js's fs.readFileSync(fd) is cross-platform.
  */
 async function executeJavaScript(code, input, tmpDir) {
-  // Inject readline() polyfill — standard in competitive programming
-  const wrapped = [
-    `const _inp   = ${JSON.stringify(String(input || ''))};`,
-    `const _lines = _inp.split('\\n');`,
-    `let   _li    = 0;`,
-    `function readline() { return _lines[_li++] ?? ''; }`,
+  // ── Preamble: read stdin once, expose input / lines[] / readline() ────────
+  const preamble = [
+    "'use strict';",
+    "const fs = require('fs');",
+    // fd 0 = stdin; synchronous read blocks until stdin is closed.
+    // runExec() calls child.stdin.end() after writing, so this never hangs.
+    "const input = fs.readFileSync(0, 'utf8').trimEnd();",
+    "const lines = input.split(/\\r?\\n/);",
+    "let _rl = 0;",
+    "function readline() { return lines[_rl++] ?? ''; }",
     '',
-    code,
   ].join('\n');
 
-  fs.writeFileSync(path.join(tmpDir, 'main.js'), wrapped);
+  // Write the preamble + user code as-is (no string escaping of user content)
+  fs.writeFileSync(path.join(tmpDir, 'main.js'), preamble + code);
 
+  // -i keeps Docker's stdin pipe open so runExec can write to it
   const runCmd = [
     'docker run',
     '-i',

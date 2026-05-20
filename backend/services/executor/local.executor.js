@@ -108,15 +108,46 @@ async function runJava(code, input) {
 async function runJavaScript(code, input) {
   const id  = uuidv4();
   const src = path.join(TEMP_DIR, `${id}.js`);
-  const wrapped = `
-const input = ${JSON.stringify(input || '')};
-const lines = input.split('\\n');
-let _lineIdx = 0;
-function readline() { return lines[_lineIdx++] || ''; }
-${code}
-`;
+
+  // ── Preamble injected before every user script ────────────────────────────
+  //
+  // Why we do this instead of injecting `const input = '...'`:
+  //
+  //   The old approach baked the input string into the source file as a JS
+  //   literal. This meant:
+  //     1. Very large inputs could produce a JS source file that is megabytes
+  //        of string literal — slow to parse and fragile with special chars.
+  //     2. Users writing `fs.readFileSync(0, 'utf8')` would get an empty
+  //        buffer because stdin was never written to.
+  //     3. The variable name `input` polluted user scope silently.
+  //
+  // The correct approach:
+  //   • Write the user's code as-is (no mutations).
+  //   • Pipe the actual input string to the child process's stdin.
+  //   • Provide a tiny preamble that reads ALL of stdin synchronously once
+  //     into a shared buffer, then exposes both:
+  //       - `input`       → the full stdin string (trimmed)
+  //       - `readline()`  → pop lines one at a time (competitive-style)
+  //       - `lines`       → pre-split array for direct indexing
+  //     This makes ALL common competitive-programming patterns work:
+  //       const n = parseInt(readline());
+  //       const input = fs.readFileSync(0, 'utf8').trim();
+  //       const [a, b] = readline().split(' ').map(Number);
+  // ──────────────────────────────────────────────────────────────────────────
+  const preamble = [
+    "'use strict';",
+    "const fs = require('fs');",
+    // Read ALL of stdin synchronously once — works because Node closes stdin
+    // after we call child.stdin.end() in executeWithTimeout().
+    "const input = fs.readFileSync(0, 'utf8').trimEnd();",
+    "const lines = input.split(/\\r?\\n/);",
+    "let _rl = 0;",
+    "function readline() { return lines[_rl++] ?? ''; }",
+    '',
+  ].join('\n');
+
   try {
-    fs.writeFileSync(src, wrapped);
+    fs.writeFileSync(src, preamble + code);
     const out = await executeWithTimeout(`node "${src}"`, input);
     cleanup([src]);
     return { success: true, output: normalizeOutput(out) };

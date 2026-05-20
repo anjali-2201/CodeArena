@@ -183,22 +183,34 @@ async function runJava(code, input) {
 
 /**
  * Run JavaScript code
+ *
+ * Input is piped to the child process via stdin (child.stdin.write).
+ * The preamble reads stdin synchronously with fs.readFileSync(0, 'utf8'),
+ * which blocks until stdin is closed — that happens immediately after
+ * executeWithTimeout() calls child.stdin.end().
+ *
+ * Exposed globals (visible to user code):
+ *   input      → full stdin string, trailing whitespace removed
+ *   lines      → input.split(/\r?\n/) array
+ *   readline() → returns lines[i++] one at a time (competitive-style)
  */
 async function runJavaScript(code, input) {
   const id = uuidv4();
   const srcFile = path.join(TEMP_DIR, `${id}.js`);
   const filesToClean = [srcFile];
 
+  const preamble = [
+    "'use strict';",
+    "const fs = require('fs');",
+    "const input = fs.readFileSync(0, 'utf8').trimEnd();",
+    "const lines = input.split(/\\r?\\n/);",
+    "let _rl = 0;",
+    "function readline() { return lines[_rl++] ?? ''; }",
+    '',
+  ].join('\n');
+
   try {
-    // Wrap code to handle stdin input
-    const wrappedCode = `
-const input = ${JSON.stringify(input || '')};
-const lines = input.split('\\n');
-let lineIndex = 0;
-function readline() { return lines[lineIndex++] || ''; }
-${code}
-`;
-    fs.writeFileSync(srcFile, wrappedCode);
+    fs.writeFileSync(srcFile, preamble + code);
     const output = await executeWithTimeout(`node "${srcFile}"`, input);
     cleanup(filesToClean);
     return { success: true, output: normalizeOutput(output) };
