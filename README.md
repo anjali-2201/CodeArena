@@ -8,9 +8,10 @@
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=flat-square&logo=mongodb&logoColor=white)](https://mongodb.com)
 [![Express](https://img.shields.io/badge/Express-4-000000?style=flat-square&logo=express&logoColor=white)](https://expressjs.com)
-[![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
+[![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
+[![Docker](https://img.shields.io/badge/Docker-Optional-2496ED?style=flat-square&logo=docker&logoColor=white)](https://docker.com)
 
-[Features](#-features) · [Architecture](#-architecture) · [Quick Start](#-quick-start) · [API Reference](#-api-reference) · [Docker Setup](#-docker-sandbox-optional)
+[Features](#-features) · [Architecture](#-architecture) · [Quick Start](#-quick-start) · [JavaScript I/O Guide](#-javascript-io-guide) · [API Reference](#-api-reference) · [Docker Sandbox](#-docker-sandbox-optional)
 
 </div>
 
@@ -20,113 +21,117 @@
 
 CodeArena is a LeetCode/Codeforces-inspired platform where users can:
 
-- Browse and solve algorithmic problems
-- Submit code in **C++, Python, Java, and JavaScript**
-- Get real-time verdicts against hidden test cases
-- Compete in **timed contests** with ICPC-style scoring
-- Track progress via a **GitHub-style activity heatmap**
-- Climb the **ranked leaderboard** with difficulty-weighted scoring
+- Browse and solve algorithmic problems across three difficulty tiers
+- Submit code in **C++17, Python 3, Java 17, and Node.js 20**
+- Get instant verdicts (AC / WA / CE / RE / TLE / MLE) judged against hidden test cases
+- **Run** code against visible sample inputs without affecting stats
+- Track solving progress with a **GitHub-style activity heatmap** and **streak system**
+- Climb the **global leaderboard** with difficulty-weighted scoring
+- Earn **achievement badges** for milestones
+- Bookmark problems and engage in **per-problem discussions**
 
 ---
 
 ## ✨ Features
 
-### 🧩 Core
+### 🧩 Core Judge
+
 | Feature | Details |
-|---------|---------|
-| **Problem Set** | 10 seeded problems across Easy / Medium / Hard |
-| **Code Editor** | Monaco Editor (same as VS Code) with syntax highlighting |
-| **Multi-language** | C++17, Python 3, Java 17, Node.js 20 |
-| **Run Code** | Test against visible sample cases — no stats impact |
-| **Submit** | Judge against hidden test cases, get verdict instantly |
-| **Verdicts** | Accepted · Wrong Answer · Compilation Error · Runtime Error · TLE · MLE |
+|---|---|
+| **Problem Set** | 10 seeded problems — Easy / Medium / Hard |
+| **Code Editor** | Monaco Editor (VS Code engine) with syntax highlighting, ligatures, and smooth scrolling |
+| **Multi-language** | C++17 · Python 3.11 · Java 17 · Node.js 20 |
+| **Run Code** | Test against visible sample cases — not saved, no stat impact |
+| **Submit** | Judge against hidden test cases, get verdict in real time |
+| **Verdicts** | `Accepted` · `Wrong Answer` · `Compilation Error` · `Runtime Error` · `Time Limit Exceeded` · `Memory Limit Exceeded` |
+| **Output Normalization** | `\r\n` → `\n` conversion + trailing-space strip prevents false Wrong Answers on Windows |
 
 ### 👤 User System
+
 | Feature | Details |
-|---------|---------|
+|---|---|
 | **JWT Auth** | Signup / Login with bcrypt (12 rounds) + 7-day tokens |
-| **RBAC** | `user` and `admin` roles with protected routes |
+| **RBAC** | `user` and `admin` roles with protected API routes |
 | **Profile Page** | LeetCode-style — solved count, difficulty rings, acceptance rate |
 | **Activity Heatmap** | 52-week GitHub-style contribution graph |
-| **Streaks** | Current streak + longest streak tracking |
-| **Badges** | First Solve, Hard Hitter, Streak 7/30, Centurion, Century Solver |
-| **Bookmarks** | Save problems for later |
+| **Streaks** | Current streak + longest streak tracking with daily reset logic |
+| **Badges** | First Solve · Hard Hitter · Streak 7 · Streak 30 · Centurion · Century Solver |
+| **Bookmarks** | Save problems for later with toggle endpoint |
 
-### 🏆 Leaderboard & Contests
+### 🏆 Leaderboard
+
 | Feature | Details |
-|---------|---------|
-| **Global Leaderboard** | Ranked users by score (Easy=10 · Medium=20 · Hard=30) |
-| **Per-user Stats** | Accuracy %, solved count, difficulty breakdown |
-| **Contests** | Timed contests with live countdown timer |
-| **Contest Scoring** | ICPC-style — penalty per wrong attempt before AC |
-| **Contest Leaderboard** | Real-time rankings during contest |
+|---|---|
+| **Global Leaderboard** | Ranked users by score (Easy = 10 · Medium = 20 · Hard = 30) |
+| **Tiebreaker** | Score → Problems Solved → Acceptance Rate |
+| **Per-user Stats** | Accuracy %, solved count, difficulty breakdown visible on profile |
 
 ### 🔒 Security & Performance
+
 | Feature | Details |
-|---------|---------|
-| **Rate Limiting** | Per-route limits (auth: 10/15min, submit: 20/5min) |
-| **Helmet** | HTTP security headers on all responses |
-| **Input Sanitization** | express-validator on all mutation endpoints |
-| **Output Normalization** | `\r\n` → `\n` conversion prevents false Wrong Answers |
-| **Redis Cache** | Configurable caching with no-op fallback |
-| **Docker Sandbox** | Optional isolated code execution (flag-controlled) |
-| **BullMQ Queue** | Optional async submission processing (flag-controlled) |
+|---|---|
+| **Rate Limiting** | Per-route limits (auth: 10/15 min · submissions: 20/5 min) |
+| **Helmet** | Full suite of HTTP security headers on all responses |
+| **Input Validation** | `express-validator` on all mutation endpoints |
+| **Redis Cache** | Configurable caching layer with transparent no-op fallback |
+| **Docker Sandbox** | Fully isolated code execution (`USE_DOCKER=true`) |
+| **BullMQ Queue** | Async submission processing with inline fallback (`USE_QUEUE=true`) |
 
 ### 💬 Community
+
 | Feature | Details |
-|---------|---------|
+|---|---|
 | **Discussions** | Per-problem threaded comments |
 | **Voting** | Upvote / downvote with duplicate prevention |
-| **Daily Challenge** | Deterministic daily problem (changes each day) |
+| **Daily Challenge** | Deterministic daily problem (rotates each day) |
 
 ---
 
 ## 🏗 Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    React Frontend (Vite)                     │
-│  Home · Problems · Contests · Leaderboard · Profile · Admin  │
-└─────────────────────────┬───────────────────────────────────┘
-                           │  HTTP  (proxy: localhost:5000)
-┌─────────────────────────▼───────────────────────────────────┐
-│                   Express API Server (:5000)                 │
-│  Helmet → Rate Limit → Auth → RBAC → Controllers            │
-│                                                              │
-│  /api/auth          JWT signup / login / me                  │
-│  /api/problems      CRUD + search + filter + daily          │
-│  /api/submissions   Run (no save) + Submit (judged)          │
-│  /api/leaderboard   Aggregated user rankings                 │
-│  /api/profile       Stats + activity + solved list          │
-│  /api/contests      List + detail + submit + rankings        │
-│  /api/bookmarks     Toggle + list                            │
-│  /api/problems/:id/discussions  Comments + voting           │
-└──────┬──────────────────────────────────────┬───────────────┘
-       │                                      │
-       ▼                                      ▼
-┌──────────────┐                    ┌──────────────────────┐
-│   MongoDB     │                   │  Redis + BullMQ       │
-│  (Mongoose)   │                   │  (optional, graceful  │
-│               │                   │   fallback if absent) │
-│  Users        │                   └──────────┬───────────┘
-│  Problems     │                              │
-│  Solutions    │                   ┌──────────▼───────────┐
-│  TestCases    │                   │   Judge Worker        │
-│  Contests     │                   │  (inline or separate) │
-│  ContestSubs  │                   └──────────┬───────────┘
-│  Discussions  │                              │
-└──────────────┘                   ┌──────────▼───────────┐
-                                   │  Code Executor        │
-                                   │  ┌─────────────────┐  │
-                                   │  │  Docker Sandbox  │  │
-                                   │  │  (USE_DOCKER=true│  │
-                                   │  └────────┬────────┘  │
-                                   │           │ fallback   │
-                                   │  ┌────────▼────────┐  │
-                                   │  │ child_process    │  │
-                                   │  │ (default)        │  │
-                                   │  └─────────────────┘  │
-                                   └──────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│                   React Frontend (Vite)                   │
+│   Home · Problems · ProblemDetail · Leaderboard · Profile │
+└──────────────────────────┬───────────────────────────────┘
+                            │  HTTP  (Vite proxy → :5000)
+┌──────────────────────────▼───────────────────────────────┐
+│                  Express API Server (:5000)               │
+│  Helmet → Rate Limit → JWT Auth → RBAC → Controllers     │
+│                                                           │
+│  /api/auth           JWT signup / login / me              │
+│  /api/problems       List · detail · daily challenge      │
+│  /api/submissions    Run (no save) · Submit (judged)      │
+│  /api/leaderboard    Aggregated user rankings             │
+│  /api/profile        Stats · activity heatmap · solved    │
+│  /api/bookmarks      Toggle · list                        │
+│  /api/problems/:id/discussions  Comments · voting         │
+└──────┬────────────────────────────────────┬──────────────┘
+       │                                    │
+       ▼                                    ▼
+┌─────────────┐                  ┌────────────────────────┐
+│   MongoDB   │                  │   Redis + BullMQ        │
+│  (Mongoose) │                  │  (optional — graceful   │
+│             │                  │   inline fallback)      │
+│  Users      │                  └────────────┬───────────┘
+│  Problems   │                               │
+│  Solutions  │                  ┌────────────▼───────────┐
+│  TestCases  │                  │   Judge Worker          │
+│  Discussions│                  │  verdict + streak/badge │
+└─────────────┘                  └────────────┬───────────┘
+                                              │
+                                 ┌────────────▼───────────┐
+                                 │   Code Executor         │
+                                 │  ┌──────────────────┐  │
+                                 │  │  Docker Sandbox   │  │
+                                 │  │  (USE_DOCKER=true)│  │
+                                 │  └────────┬─────────┘  │
+                                 │           │ fallback     │
+                                 │  ┌────────▼─────────┐  │
+                                 │  │ child_process     │  │
+                                 │  │ (default/local)   │  │
+                                 │  └──────────────────┘  │
+                                 └────────────────────────┘
 ```
 
 ---
@@ -136,28 +141,26 @@ CodeArena is a LeetCode/Codeforces-inspired platform where users can:
 ```
 online-judge/
 ├── backend/
-│   ├── compiler/              ← Legacy (kept for reference)
+│   ├── compiler/                   ← Legacy runner (kept for reference)
+│   │   └── index.js
 │   ├── controllers/
-│   │   ├── auth.controller.js
-│   │   ├── problem.controller.js
-│   │   ├── submission.controller.js
+│   │   ├── auth.controller.js      ← signup, login, me
+│   │   ├── problem.controller.js   ← list, detail, daily
+│   │   ├── submission.controller.js← run + submit + judge
 │   │   ├── leaderboard.controller.js
-│   │   ├── profile.controller.js
-│   │   ├── contest.controller.js
-│   │   └── features.controller.js  ← bookmarks, daily, discussions
+│   │   ├── profile.controller.js   ← stats, activity, solved
+│   │   └── features.controller.js  ← bookmarks, discussions, votes
 │   ├── middleware/
 │   │   ├── auth.middleware.js       ← JWT verification
 │   │   ├── rbac.middleware.js       ← requireRole('admin')
-│   │   ├── rateLimit.middleware.js  ← per-route limits
+│   │   ├── rateLimit.middleware.js  ← per-route Express rate limits
 │   │   ├── validate.middleware.js   ← express-validator runner
-│   │   └── errorHandler.middleware.js ← global async handler
+│   │   └── errorHandler.middleware.js
 │   ├── models/
-│   │   ├── User.js            ← role, streak, badges, bookmarks
+│   │   ├── User.js                 ← role, streak, badges, bookmarks
 │   │   ├── Problem.js
 │   │   ├── Solution.js
 │   │   ├── TestCase.js
-│   │   ├── Contest.js
-│   │   ├── ContestSubmission.js
 │   │   └── Discussion.js
 │   ├── routes/
 │   │   ├── auth.routes.js
@@ -165,21 +168,21 @@ online-judge/
 │   │   ├── submission.routes.js
 │   │   ├── leaderboard.routes.js
 │   │   ├── profile.routes.js
-│   │   ├── contest.routes.js
 │   │   └── features.routes.js
 │   ├── services/
 │   │   ├── executor/
-│   │   │   ├── index.js           ← auto-routes Docker ↔ local
-│   │   │   ├── docker.executor.js ← sandboxed Docker execution
-│   │   │   └── local.executor.js  ← child_process fallback
-│   │   ├── cache.service.js       ← Redis with no-op fallback
-│   │   ├── queue.service.js       ← BullMQ with inline fallback
-│   │   └── judge.worker.js        ← verdict logic + streak/badges
+│   │   │   ├── index.js            ← auto-routes Docker ↔ local
+│   │   │   ├── docker.executor.js  ← sandboxed Docker execution
+│   │   │   └── local.executor.js   ← child_process fallback
+│   │   ├── cache.service.js        ← Redis with transparent no-op fallback
+│   │   ├── queue.service.js        ← BullMQ with inline fallback
+│   │   └── judge.worker.js         ← verdict logic + streak/badge updates
 │   ├── utils/
 │   │   ├── ApiError.js
 │   │   ├── ApiResponse.js
-│   │   └── logger.js
-│   ├── utils/seed.js              ← seed 10 problems + test cases
+│   │   ├── logger.js
+│   │   └── seed.js                 ← seed 10 problems + test cases
+│   ├── temp/                       ← runtime-created; auto-cleaned after each run
 │   ├── .env
 │   ├── package.json
 │   └── server.js
@@ -188,24 +191,24 @@ online-judge/
     ├── src/
     │   ├── components/
     │   │   ├── Navbar.jsx
-    │   │   └── Heatmap.jsx
+    │   │   └── Heatmap.jsx          ← 52-week GitHub activity graph
     │   ├── context/
-    │   │   └── AuthContext.jsx
+    │   │   └── AuthContext.jsx      ← JWT state + Axios interceptors
     │   ├── pages/
     │   │   ├── Home.jsx
     │   │   ├── Login.jsx
     │   │   ├── Signup.jsx
-    │   │   ├── Problems.jsx
-    │   │   ├── ProblemDetail.jsx  ← Monaco + Run + Submit
+    │   │   ├── Problems.jsx         ← searchable, filterable problem list
+    │   │   ├── ProblemDetail.jsx    ← Monaco editor + Run + Submit
     │   │   ├── Leaderboard.jsx
-    │   │   ├── Profile.jsx
-    │   │   ├── Contests.jsx
-    │   │   └── ContestDetail.jsx
-    │   ├── services/api.js        ← Axios + JWT interceptors
-    │   ├── App.jsx
+    │   │   └── Profile.jsx          ← stats rings + heatmap + badges
+    │   ├── services/
+    │   │   └── api.js               ← Axios instance + JWT interceptors
+    │   ├── App.jsx                  ← routes + protected route guard
     │   ├── main.jsx
-    │   └── index.css              ← full dark design system
-    └── vite.config.js             ← proxy /api → :5000
+    │   └── index.css                ← dark design system (CSS variables)
+    ├── vite.config.js               ← dev proxy /api → localhost:5000
+    └── package.json
 ```
 
 ---
@@ -217,12 +220,12 @@ online-judge/
 | Tool | Required | Notes |
 |------|----------|-------|
 | Node.js ≥ 18 | ✅ | `node --version` |
-| MongoDB | ✅ | Local or Atlas |
+| MongoDB | ✅ | Local install or Atlas free tier |
 | g++ | ✅ | For C++ execution |
 | Python 3 | ✅ | For Python execution |
 | Java / javac | ✅ | For Java execution |
-| Redis | ⚙️ Optional | Enables caching + queue |
-| Docker Desktop | ⚙️ Optional | Enables sandbox execution |
+| Redis | ⚙️ Optional | Enables caching + BullMQ queue |
+| Docker Desktop | ⚙️ Optional | Enables fully sandboxed execution |
 
 ---
 
@@ -232,10 +235,10 @@ online-judge/
 git clone https://github.com/anjali-2201/online-judge.git
 cd online-judge
 
-# Install backend dependencies
+# Backend
 cd backend && npm install
 
-# Install frontend dependencies
+# Frontend
 cd ../frontend && npm install
 ```
 
@@ -243,44 +246,48 @@ cd ../frontend && npm install
 
 ### Step 2 — Configure Environment
 
-Edit `backend/.env`:
+Create / edit `backend/.env`:
 
 ```env
 PORT=5000
 MONGO_URI=mongodb://localhost:27017/online-judge
-JWT_SECRET=your_super_secret_key_change_this
+JWT_SECRET=change_this_to_a_long_random_secret
 JWT_EXPIRES_IN=7d
 NODE_ENV=development
 FRONTEND_URL=http://localhost:5173
 
-# Redis (optional — leave false if not installed)
+# ── Redis (leave false if Redis is not installed) ─────────
 REDIS_HOST=localhost
 REDIS_PORT=6379
 USE_CACHE=false
 USE_QUEUE=false
 
-# Docker sandbox (optional — leave false if not installed)
+# ── Docker sandbox (leave false if Docker is not running) ─
 USE_DOCKER=false
 
-# Execution limits
-EXEC_TIME_LIMIT=10000
+# ── Execution limits ──────────────────────────────────────
+EXEC_TIME_LIMIT=10000    # milliseconds per test case
 EXEC_MEM_LIMIT=256m
 EXEC_CPU_LIMIT=0.5
+
+# ── Worker concurrency (when USE_QUEUE=true) ──────────────
 WORKER_CONCURRENCY=3
 ```
+
+> ⚠️ **Never commit `.env` to version control. Always change `JWT_SECRET` before deploying.**
 
 ---
 
 ### Step 3 — Start MongoDB
 
 ```bash
-# Windows (installed as service)
+# Windows (if installed as a service)
 net start MongoDB
 
-# Or manually
+# Or start manually
 mongod --dbpath C:\data\db
 
-# Using Atlas: update MONGO_URI in .env with your connection string
+# Using MongoDB Atlas: paste your connection string into MONGO_URI in .env
 ```
 
 ---
@@ -323,39 +330,96 @@ Open **http://localhost:5173** in your browser.
 
 ---
 
+## 🟨 JavaScript I/O Guide
+
+JavaScript submissions run inside Node.js (v20). The executor automatically prepends the following preamble **before your code**:
+
+```js
+'use strict';
+const fs = require('fs');
+const input = fs.readFileSync(0, 'utf8').trimEnd(); // reads all of stdin
+const lines = input.split(/\r?\n/);                 // pre-split line array
+let _rl = 0;
+function readline() { return lines[_rl++] ?? ''; }  // pop one line at a time
+```
+
+This means three I/O patterns are available out of the box — **pick whichever you prefer**:
+
+### Pattern 1 — `readline()` (most common in competitive programming)
+
+```js
+const n = parseInt(readline());
+const arr = readline().split(' ').map(Number);
+console.log(arr.reduce((a, b) => a + b, 0));
+```
+
+### Pattern 2 — `lines[]` (indexed access to all lines)
+
+```js
+const n = parseInt(lines[0]);
+const arr = lines[1].split(' ').map(Number);
+console.log(arr.reduce((a, b) => a + b, 0));
+```
+
+### Pattern 3 — `input` / `fs.readFileSync` (full string manipulation)
+
+```js
+// Via the pre-loaded `input` variable
+const [a, b] = input.trim().split('\n').map(Number);
+
+// Or directly — both are equivalent
+const raw = fs.readFileSync(0, 'utf8').trim();
+```
+
+### Multi-line / Multiple Test Cases
+
+```js
+const t = parseInt(readline());       // number of test cases
+for (let i = 0; i < t; i++) {
+  const [a, b] = readline().split(' ').map(Number);
+  console.log(a + b);
+}
+```
+
+### Why Not `process.stdin` or `prompt()`?
+
+`process.stdin` is asynchronous and requires event listeners, which is awkward in CP-style solutions. `fs.readFileSync(0, 'utf8')` reads all stdin synchronously before your logic runs — exactly what competitive programmers expect. The executor pipes input via `child.stdin` and closes it immediately, so `readFileSync` never blocks.
+
+---
+
 ## 🔌 API Reference
 
 ### Authentication
 
 | Method | Endpoint | Auth | Body | Description |
 |--------|----------|------|------|-------------|
-| `POST` | `/api/auth/signup` | ❌ | `{fullName, email, password, dob}` | Register |
-| `POST` | `/api/auth/login` | ❌ | `{email, password}` | Login → JWT |
-| `GET` | `/api/auth/me` | ✅ | — | Current user |
+| `POST` | `/api/auth/signup` | ❌ | `{ fullName, email, password, dob }` | Register new user |
+| `POST` | `/api/auth/login` | ❌ | `{ email, password }` | Login → JWT |
+| `GET` | `/api/auth/me` | ✅ | — | Get current user |
 
 ### Problems
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| `GET` | `/api/problems` | ❌ | List all (search, difficulty filter) |
-| `GET` | `/api/problems/:id` | ❌ | Problem detail + examples |
+| `GET` | `/api/problems` | ❌ | List all problems (supports `?search=` and `?difficulty=`) |
+| `GET` | `/api/problems/:id` | ❌ | Problem detail + examples + constraints |
 | `GET` | `/api/problems/daily` | ❌ | Today's daily challenge |
 
 ### Submissions
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| `POST` | `/api/submissions` | ✅ | Submit code → hidden test cases → verdict |
-| `POST` | `/api/submissions/run` | ✅ | Run against samples only (no DB save) |
+| `POST` | `/api/submissions` | ✅ | Submit code → hidden test cases → verdict (saved to DB) |
+| `POST` | `/api/submissions/run` | ✅ | Run against sample cases only (not saved) |
 | `GET` | `/api/submissions/my` | ✅ | My submission history |
 
 ### Profile
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| `GET` | `/api/profile/stats` | ✅ | Solved counts, accuracy, streak |
-| `GET` | `/api/profile/solved` | ✅ | Unique solved problems list |
-| `GET` | `/api/profile/activity` | ✅ | Daily submission data (heatmap) |
+| `GET` | `/api/profile/stats` | ✅ | Solved counts, accuracy %, current/longest streak |
+| `GET` | `/api/profile/solved` | ✅ | List of uniquely solved problems |
+| `GET` | `/api/profile/activity` | ✅ | Daily submission counts for heatmap |
 
 ### Leaderboard
 
@@ -363,82 +427,81 @@ Open **http://localhost:5173** in your browser.
 |--------|----------|------|-------------|
 | `GET` | `/api/leaderboard` | ❌ | Ranked users by score (paginated) |
 
-### Contests
-
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `GET` | `/api/contests` | ❌ | List contests (filter by status) |
-| `GET` | `/api/contests/:id` | ❌ | Contest detail + problems |
-| `GET` | `/api/contests/:id/leaderboard` | ❌ | Contest rankings |
-| `POST` | `/api/contests/:id/submit` | ✅ | Submit to active contest |
-| `POST` | `/api/contests` | Admin | Create contest |
-| `PUT` | `/api/contests/:id` | Admin | Update contest |
-
 ### Features
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| `POST` | `/api/bookmarks/:problemId` | ✅ | Toggle bookmark |
-| `GET` | `/api/bookmarks` | ✅ | My bookmarks |
-| `GET` | `/api/problems/:id/discussions` | ❌ | List comments |
-| `POST` | `/api/problems/:id/discussions` | ✅ | Post comment |
-| `POST` | `/api/problems/:id/discussions/:dId/vote` | ✅ | Vote (up/down) |
+| `POST` | `/api/bookmarks/:problemId` | ✅ | Toggle bookmark on/off |
+| `GET` | `/api/bookmarks` | ✅ | My bookmarked problems |
+| `GET` | `/api/problems/:id/discussions` | ❌ | List comments for a problem |
+| `POST` | `/api/problems/:id/discussions` | ✅ | Post a comment |
+| `POST` | `/api/problems/:id/discussions/:dId/vote` | ✅ | Upvote or downvote |
 
 ---
 
 ## 🐳 Docker Sandbox (Optional)
 
-When `USE_DOCKER=true`, every submission runs inside an isolated container:
+When `USE_DOCKER=true`, every submission runs inside a fully isolated container:
 
-```bash
-docker run --rm \
-  --network=none \              # no internet access
-  --memory=256m \               # memory cap
-  --cpus=0.5 \                  # CPU limit
-  --read-only \                 # no filesystem writes
-  --tmpfs /tmp:size=64m \       # writable tmp only
-  --pids-limit=50 \             # prevent fork bombs
-  --cap-drop=ALL \              # no Linux capabilities
-  --security-opt=no-new-privileges \
-  <language-image>
+```
+--rm                          auto-remove after exit
+--network=none                no internet access
+--memory=256m                 hard RAM cap
+--memory-swap=256m            swap disabled
+--cpus=0.5                    CPU fraction cap
+--read-only                   no filesystem writes
+--tmpfs /tmp:size=64m         writable scratch space only
+--pids-limit=50               prevents fork bombs
+--cap-drop=ALL                drops every Linux capability
+--security-opt=no-new-privileges
 ```
 
 **Setup:**
 
 ```bash
-# 1. Install Docker Desktop: https://docker.com
+# 1. Install Docker Desktop
+#    https://docs.docker.com/desktop/install/windows-install/
 
 # 2. Pull language images
 docker pull gcc:12
 docker pull python:3.11-slim
-docker pull openjdk:17-slim
+docker pull eclipse-temurin:17-jdk-alpine
 docker pull node:20-slim
 
-# 3. Enable in .env
+# 3. Enable in backend/.env
 USE_DOCKER=true
 ```
+
+**How stdin works with Docker:**
+
+The executor uses `docker run -i` (interactive stdin) and pipes input via Node.js's `child.stdin.write()` / `child.stdin.end()`. This is the only correct cross-platform approach — shell redirects (`< file`) don't work reliably on Windows with Docker, and Docker has no `--timeout` flag.
 
 ---
 
 ## ⚡ Redis / BullMQ Queue (Optional)
 
-When `USE_QUEUE=true`, submissions are processed asynchronously:
+When `USE_QUEUE=true`, submissions are processed asynchronously via BullMQ:
 
 ```
-Submit → Create "Pending" verdict → Enqueue job → Return immediately
-Worker → Dequeue → Execute → Update verdict in DB
-Client → Poll GET /api/submissions/:id/status
+POST /api/submissions
+  → Creates solution with verdict = "Pending"
+  → Enqueues job → Returns immediately to client
+
+BullMQ Worker
+  → Dequeues job → Executes code → Updates verdict in DB
 ```
+
+When Redis is unavailable, the system falls back to **inline synchronous execution** — no configuration change needed.
 
 **Setup:**
 
 ```bash
-# Windows — install Redis via WSL or use Docker
+# Windows — run Redis via Docker
 docker run -d -p 6379:6379 redis:7-alpine
 
-# Enable in .env
-USE_QUEUE=true
+# Enable in backend/.env
 USE_CACHE=true
+USE_QUEUE=true
 ```
 
 ---
@@ -446,7 +509,7 @@ USE_CACHE=true
 ## 🧩 Seeded Problems
 
 | # | Problem | Difficulty | Points |
-|---|---------|-----------|--------|
+|---|---------|------------|--------|
 | 1 | Two Sum | Easy | 10 |
 | 2 | Reverse String | Easy | 10 |
 | 3 | Palindrome Number | Easy | 10 |
@@ -464,50 +527,55 @@ USE_CACHE=true
 
 ```
 Score = Σ (difficulty points for each uniquely solved problem)
-  Easy   = 10 pts
-  Medium = 20 pts
-  Hard   = 30 pts
 
-Each problem is counted ONCE (first AC only).
-Ranked by: Score ↓ → Problems Solved ↓ → Acceptance Rate ↓
+  Easy   =  10 pts
+  Medium =  20 pts
+  Hard   =  30 pts
+
+Each problem is counted ONCE (first Accepted submission only).
+
+Tiebreaker: Score ↓ → Problems Solved ↓ → Acceptance Rate ↓
 ```
 
-## 🥊 Contest Scoring (ICPC Style)
+---
 
-```
-Score  = problems solved × 100
-Penalty = wrong attempts before AC × penaltyMinutes (default: 20)
-Ranked by: Score ↓ → Penalty ↑ → Last AC Time ↑
-```
+## 🥇 Badges
+
+| Badge | Trigger |
+|-------|---------|
+| 🎯 First Solve | Submit first ever Accepted solution |
+| 💎 Hard Hitter | Solve 5+ Hard problems |
+| 🔥 Streak 7 | Maintain a 7-day solving streak |
+| 🌟 Streak 30 | Maintain a 30-day solving streak |
+| 💯 Centurion | Make 100+ total submissions |
+| 🏆 Century Solver | Solve 100+ unique problems |
 
 ---
 
 ## 🔐 Security
 
 - **Passwords** — bcrypt (12 salt rounds), never returned in API responses
-- **JWTs** — HS256, 7-day expiry, auto-cleared on 401
-- **Rate Limiting** — per-route (auth: 10/15min, submission: 20/5min)
-- **Helmet** — HTTP security headers on all responses
+- **JWTs** — HS256, 7-day expiry, automatically cleared on 401 response
+- **Rate Limiting** — per-route (auth: 10/15 min · submissions: 20/5 min)
+- **Helmet** — HTTP security headers (CSP, HSTS, X-Frame-Options, etc.)
 - **RBAC** — admin routes protected by `requireRole('admin')` middleware
-- **No ID exposure** — MongoDB ObjectIds never returned in leaderboard/profile
-- **Code isolation** — Docker sandbox (when enabled) prevents filesystem/network access
-
-> ⚠️ **Never commit `.env` to version control. Change `JWT_SECRET` before deploying.**
+- **Input Validation** — `express-validator` on all write endpoints
+- **Code Isolation** — Docker sandbox prevents any filesystem or network access from user code
 
 ---
 
 ## 📜 Scripts
 
 ```bash
-# Backend
+# ── Backend ──────────────────────────────────────────
 npm run dev        # Start with nodemon (hot reload)
-npm start          # Production start
+npm start          # Production start (no reload)
 node utils/seed.js # Seed 10 problems into MongoDB
 
-# Frontend
+# ── Frontend ─────────────────────────────────────────
 npm run dev        # Start Vite dev server (localhost:5173)
-npm run build      # Build for production
-npm run preview    # Preview production build
+npm run build      # Production bundle → dist/
+npm run preview    # Preview production build locally
 ```
 
 ---
@@ -516,9 +584,9 @@ npm run preview    # Preview production build
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feat/your-feature`
-3. Commit changes: `git commit -m "feat: description"`
+3. Commit with conventional commits: `git commit -m "feat: add X"`
 4. Push: `git push origin feat/your-feature`
-5. Open a Pull Request
+5. Open a Pull Request against `main`
 
 ---
 
