@@ -45,7 +45,6 @@ const problemRoutes    = require('./routes/problem.routes');
 const submissionRoutes = require('./routes/submission.routes');
 const leaderboardRoutes = require('./routes/leaderboard.routes');
 const profileRoutes    = require('./routes/profile.routes');
-const featuresRoutes   = require('./routes/features.routes');
 
 // Tighter rate limits on auth + submissions
 app.use('/api/auth',        rateLimits.auth,       authRoutes);
@@ -53,7 +52,7 @@ app.use('/api/problems',    problemRoutes);
 app.use('/api/submissions', rateLimits.submission,  submissionRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/profile',     profileRoutes);
-app.use('/api',             featuresRoutes);     // /api/bookmarks, /api/problems/daily, /api/problems/:id/discussions
+
 
 // ── Health check ──────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
