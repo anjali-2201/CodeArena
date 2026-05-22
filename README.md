@@ -56,49 +56,8 @@ An advanced online coding platform and competitive programming judge built using
 
 # Architecture Overview
 
-```text
-                    ┌───────────────────┐
-                    │      Frontend     │
-                    │   React + Vite    │
-                    └─────────┬─────────┘
-                              │
-                              ▼
-                    ┌───────────────────┐
-                    │   Express Server  │
-                    │   Node.js API     │
-                    └─────────┬─────────┘
-                              │
-                      Stores Submission
-                              │
-                              ▼
-                    ┌───────────────────┐
-                    │   BullMQ Queue    │
-                    │      Redis        │
-                    └─────────┬─────────┘
-                              │
-                              ▼
-                    ┌───────────────────┐
-                    │      Worker       │
-                    │ Async Processing  │
-                    └─────────┬─────────┘
-                              │
-                              ▼
-                    ┌───────────────────┐
-                    │  Docker Sandbox   │
-                    │ Secure Execution  │
-                    └─────────┬─────────┘
-                              │
-                              ▼
-                    ┌───────────────────┐
-                    │ Verdict Generator │
-                    └─────────┬─────────┘
-                              │
-                              ▼
-                    ┌───────────────────┐
-                    │     MongoDB       │
-                    │ Submission Store  │
-                    └───────────────────┘
-```
+<img width="1693" height="929" alt="ChatGPT Image May 22, 2026, 08_30_02 PM" src="https://github.com/user-attachments/assets/56728c94-8e13-40ca-a5aa-4a7e3327d025" />
+
 
 ---
 
