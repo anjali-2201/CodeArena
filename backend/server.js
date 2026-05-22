@@ -2,7 +2,6 @@ const express  = require('express');
 const mongoose = require('mongoose');
 const cors     = require('cors');
 const dotenv   = require('dotenv');
-const helmet   = require('helmet');
 
 dotenv.config();
 
@@ -11,15 +10,9 @@ const { initRedis }    = require('./services/cache.service');
 const { initExecutor } = require('./services/executor');
 const { initQueue }    = require('./services/queue.service');
 const { errorHandler } = require('./middleware/errorHandler.middleware');
-const rateLimits       = require('./middleware/rateLimit.middleware');
 
 const app = express();
 
-// ── Security headers ──────────────────────────────────────────────────────
-app.use(helmet({
-  crossOriginEmbedderPolicy: false,   // Allow Monaco editor CDN
-  contentSecurityPolicy: false,       // Managed by frontend
-}));
 
 // ── CORS ──────────────────────────────────────────────────────────────────
 app.use(cors({
@@ -28,16 +21,15 @@ app.use(cors({
 }));
 
 // ── Body parsing ──────────────────────────────────────────────────────────
-app.use(express.json({ limit: '512kb' }));
-app.use(express.urlencoded({ extended: true, limit: '512kb' }));
+app.use(express.json());
+
 
 // ── HTTP Logging ──────────────────────────────────────────────────────────
 const [consoleLogger, fileLogger] = createLoggers();
 app.use(consoleLogger);
 app.use(fileLogger);
 
-// ── Global rate limiter ───────────────────────────────────────────────────
-app.use('/api/', rateLimits.general);
+
 
 // ── Routes ────────────────────────────────────────────────────────────────
 const authRoutes       = require('./routes/auth.routes');
@@ -47,9 +39,9 @@ const leaderboardRoutes = require('./routes/leaderboard.routes');
 const profileRoutes    = require('./routes/profile.routes');
 
 // Tighter rate limits on auth + submissions
-app.use('/api/auth',        rateLimits.auth,       authRoutes);
+app.use('/api/auth',        authRoutes);
 app.use('/api/problems',    problemRoutes);
-app.use('/api/submissions', rateLimits.submission,  submissionRoutes);
+app.use('/api/submissions', submissionRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/profile',     profileRoutes);
 

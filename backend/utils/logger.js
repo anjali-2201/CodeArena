@@ -29,9 +29,12 @@ const FORMAT_FILE = ':remote-addr - :method :url :status :response-time ms :date
  * Returns [consoleLogger, fileLogger] middlewares
  */
 function createLoggers() {
-  const consoleLogger = morgan(FORMAT_DEV, {
-    skip: (req) => req.url === '/api/health',
-  });
+  const consoleLogger =
+  process.env.ENABLE_REQUEST_LOGS === 'true'
+    ? morgan(FORMAT_DEV, {
+        skip: (req) => req.url === '/api/health',
+      })
+    : (req, res, next) => next();
 
   const fileLogger = morgan(FORMAT_FILE, {
     stream:   accessLogStream,
@@ -49,7 +52,7 @@ const logger = {
   warn:  (...args) => console.warn(`[WARN]`, new Date().toISOString(), ...args),
   error: (...args) => console.error(`[ERR]`, new Date().toISOString(), ...args),
   debug: (...args) => {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.ENABLE_DEBUG_LOGS === 'true'){
       console.log(`[DEBUG]`, new Date().toISOString(), ...args);
     }
   },

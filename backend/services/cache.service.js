@@ -21,7 +21,7 @@ async function initRedis() {
       password:       process.env.REDIS_PASSWORD || undefined,
       lazyConnect:    true,
       enableReadyCheck: false,
-      maxRetriesPerRequest: 1,
+      maxRetriesPerRequest: null,
       retryStrategy: () => null, // don't retry — fail fast
     });
 
