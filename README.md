@@ -68,7 +68,7 @@ An advanced online coding platform and competitive programming judge built using
                     │   Node.js API     │
                     └─────────┬─────────┘
                               │
-                  Stores Submission
+                      Stores Submission
                               │
                               ▼
                     ┌───────────────────┐
