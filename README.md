@@ -1,38 +1,30 @@
-# CodeArena 
+# CodeArena
 
-CodeArena is a modern full-stack online coding platform inspired by platforms like LeetCode, HackerRank, and Codeforces. It allows users to solve programming problems, run code in multiple languages, submit solutions, and receive real-time verdicts through a secure Docker-based judging system.
-
-The project focuses on:
-
-* Secure code execution
-* Scalable submission processing
-* Clean frontend experience
-* Real-world backend architecture
-* Competitive programming workflow
+An advanced online coding platform and competitive programming judge built using the MERN stack with secure Docker-based code execution, BullMQ queue processing, Redis caching, and multi-language support.
 
 ---
 
 # Features
 
-## User Features
+* User Authentication & Authorization (JWT)
+* Secure code execution using Docker sandboxing
+* Multi-language support
 
-* User Authentication (JWT)
-* Solve coding problems
-* Multi-language code execution
-* Real-time submission verdicts
-* Online code editor
-* User profiles
-* Activity heatmap
+  * C++
+  * Python
+  * Java
+  * JavaScript
+* Problem management system
+* Hidden & sample test cases
+* Real-time verdict generation
+* Queue-based asynchronous submission processing using BullMQ + Redis
 * Leaderboard system
-
-##  System Features
-
-* Docker-based sandbox execution
-* Queue-based judging system
-* Secure API architecture
-* MongoDB database integration
-* Rate limiting & security middleware
-* Modular scalable backend
+* Submission history tracking
+* Time limit & memory limit handling
+* Runtime error / compilation error handling
+* Output normalization for cross-platform consistency
+* Docker-isolated execution environment
+* Scalable backend architecture
 
 ---
 
@@ -40,184 +32,203 @@ The project focuses on:
 
 ## Frontend
 
-* React
-* Vite
-* React Router DOM
+* React.js
+* Tailwind CSS
 * Axios
-* Monaco Editor
-* Framer Motion
+* React Router
 
 ## Backend
 
 * Node.js
 * Express.js
-* MongoDB + Mongoose
+* MongoDB
+* Mongoose
 * JWT Authentication
-* BullMQ
-* Redis
+
+## Execution & Infrastructure
+
 * Docker
-* bcryptjs
-* Helmet
-* Express Rate Limit
+* Redis
+* BullMQ
+* Child Processes
 
 ---
 
-#  System Architecture
+# Architecture Overview
 
 ```text
-Frontend (React)
-        ↓
-REST API Requests
-        ↓
-Backend Server (Express)
-        ↓
-MongoDB Database
-        ↓
-Submission Queue (BullMQ + Redis)
-        ↓
-Docker Sandbox / Compiler
-        ↓
-Execution Result & Verdict
+                    ┌───────────────────┐
+                    │      Frontend     │
+                    │   React + Vite    │
+                    └─────────┬─────────┘
+                              │
+                              ▼
+                    ┌───────────────────┐
+                    │   Express Server  │
+                    │   Node.js API     │
+                    └─────────┬─────────┘
+                              │
+                  Stores Submission
+                              │
+                              ▼
+                    ┌───────────────────┐
+                    │   BullMQ Queue    │
+                    │      Redis        │
+                    └─────────┬─────────┘
+                              │
+                              ▼
+                    ┌───────────────────┐
+                    │      Worker       │
+                    │ Async Processing  │
+                    └─────────┬─────────┘
+                              │
+                              ▼
+                    ┌───────────────────┐
+                    │  Docker Sandbox   │
+                    │ Secure Execution  │
+                    └─────────┬─────────┘
+                              │
+                              ▼
+                    ┌───────────────────┐
+                    │ Verdict Generator │
+                    └─────────┬─────────┘
+                              │
+                              ▼
+                    ┌───────────────────┐
+                    │     MongoDB       │
+                    │ Submission Store  │
+                    └───────────────────┘
 ```
 
 ---
 
-# Project Structure
+# Submission Workflow
 
 ```text
-CodeArena/
-│
-├── backend/
-│   ├── compiler/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   ├── services/
-│   ├── utils/
-│   └── server.js
-│
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── context/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   └── vite.config.js
-│
-└── README.md
+1. User submits code
+        ↓
+2. Backend validates request
+        ↓
+3. Submission stored in MongoDB
+        ↓
+4. BullMQ job added to Redis queue
+        ↓
+5. Worker picks submission job
+        ↓
+6. Docker sandbox created
+        ↓
+7. Code compiled and executed
+        ↓
+8. Output compared with expected output
+        ↓
+9. Verdict generated
+        ↓
+10. Result stored in database
+        ↓
+11. Frontend polls and displays verdict
 ```
 
 ---
 
-# Authentication Flow
+# Why BullMQ + Redis?
 
-```text
-User Login/Register
-        ↓
-Backend validates credentials
-        ↓
-JWT Token generated
-        ↓
-Frontend stores token
-        ↓
-Protected API requests use token
-        ↓
-Backend verifies token
+Direct execution blocks the request cycle and reduces scalability.
+
+Using BullMQ:
+
+* keeps the API responsive,
+* processes submissions asynchronously,
+* supports concurrent users,
+* improves scalability.
+
+---
+
+# Why Docker?
+
+Docker is used to securely execute untrusted user code.
+
+Benefits:
+
+* Isolation
+* Security
+* Resource limiting
+* CPU & memory restrictions
+* Timeout handling
+
+---
+
+# Why Child Processes?
+
+The backend uses Node.js, but users submit code in multiple languages.
+
+Child processes are used to:
+
+* compile C++ code,
+* execute Python scripts,
+* run Java programs,
+* start Docker containers.
+
+This allows the backend to interact with operating-system-level programs safely.
+
+---
+
+# Supported Verdicts
+
+* Accepted
+* Wrong Answer
+* Compilation Error
+* Runtime Error
+* Time Limit Exceeded
+
+---
+
+# Environment Variables
+
+Create a `.env` file in the backend root:
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_uri
+JWT_SECRET=your_secret
+JWT_EXPIRES_IN=7d
+NODE_ENV=development
+FRONTEND_URL=http://localhost:5173
+
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+USE_CACHE=true
+USE_QUEUE=true
+USE_DOCKER=true
+
+EXEC_TIME_LIMIT=10000
+EXEC_MEM_LIMIT=256m
+EXEC_CPU_LIMIT=0.5
+
+WORKER_CONCURRENCY=3
 ```
 
 ---
 
-# Submission Flow
+# Installation
 
-```text
-1. User writes code
-2. Submission sent to backend
-3. Submission added to queue
-4. Worker picks submission
-5. Docker sandbox compiles code
-6. Code runs against test cases
-7. Output compared
-8. Verdict generated
-9. Result stored in database
-10. Response returned to frontend
-```
-
----
-
-# Secure Code Execution
-
-Code execution is isolated using Docker containers to prevent:
-
-* Infinite loops
-* Memory abuse
-* File system access
-* Server crashes
-* Malicious code execution
-
-Supported languages:
-
-* C++
-* Java
-* Python
-* JavaScript
-
----
-
-# Scalability Features
-
-* Queue-based submission processing
-* Worker architecture
-* Stateless JWT authentication
-* Modular backend structure
-* Isolated execution environment
-* Secure middleware integration
-
----
-
-# Security Features
-
-* JWT Authentication
-* Password Hashing using bcrypt
-* Helmet security headers
-* API rate limiting
-* Docker sandbox isolation
-* Environment variable protection
-
----
-
-# Getting Started
-
-## 1. Clone Repository
+## Clone Repository
 
 ```bash
-git clone https://github.com/anjali-2201/CodeArena
+git clone <repo-url>
 cd CodeArena
 ```
 
 ---
 
-## 2. Backend Setup
+# Backend Setup
 
 ```bash
 cd backend
 npm install
 ```
 
-Create a `.env` file:
-
-```env
-PORT=5000
-MONGO_URI=your_mongodb_uri
-JWT_SECRET=your_secret_key
-FRONTEND_URL=http://localhost:5173
-REDIS_URL=redis://localhost:6379
-```
-
-Start backend server:
+Start backend:
 
 ```bash
 npm run dev
@@ -225,7 +236,7 @@ npm run dev
 
 ---
 
-## 3. Frontend Setup
+# Frontend Setup
 
 ```bash
 cd frontend
@@ -235,43 +246,92 @@ npm run dev
 
 ---
 
-# Future Improvements
+# Redis Setup
 
-* Contest system
-* Real-time updates with WebSockets
-* AI-generated hints
-* Editorial section
-* Discussion forums
-* Code analytics
-* Advanced leaderboard system
-* Multi-file code submissions
+Run Redis using Docker:
+
+```bash
+docker run -d --name redis -p 6379:6379 redis
+```
 
 ---
 
-# What This Project Demonstrates
+# Docker Requirement
 
-* Full-stack web development
-* REST API architecture
-* Secure authentication systems
-* Queue-based processing
-* Docker sandboxing
-* Database modeling
-* Real-world scalable backend design
-* Online judge system architecture
+Ensure Docker Desktop is installed and running.
+
+Verify Docker:
+
+```bash
+docker ps
+```
+
+---
+
+# Folder Structure
+
+```text
+CodeArena/
+│
+├── backend/
+│   ├── controllers/
+│   ├── routes/
+│   ├── middleware/
+│   ├── models/
+│   ├── services/
+│   ├── workers/
+│   ├── queues/
+│   ├── temp/
+│   └── utils/
+│
+├── frontend/
+│   ├── src/
+│   ├── components/
+│   ├── pages/
+│   └── services/
+│
+└── README.md
+```
+
+---
+
+# Security Features
+
+* Docker sandbox isolation
+* Execution timeout limits
+* CPU & memory limits
+* JWT authentication
+* Input validation
+* Queue-based execution isolation
+
+---
+
+# Future Improvements
+
+* Contest mode
+* Real-time collaborative coding
+* WebSocket verdict updates
+* Kubernetes scaling
+* AI-based code analysis
+* Plagiarism detection
+* Multi-worker distributed execution
+
+---
+
+# Key Learning Outcomes
+
+This project demonstrates:
+
+* System design fundamentals
+* Queue architecture
+* Scalable backend engineering
+* Secure code execution
+* Docker orchestration
+* Distributed processing concepts
+* Real-world online judge architecture
 
 ---
 
 # Author
 
-Created by Anjali.
-
----
-
-# Inspiration
-
-Inspired by platforms like:
-
-* LeetCode
-* HackerRank
-* Codeforces
-* HackerEarth
+Developed by Anjali Sahu.
