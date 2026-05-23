@@ -2,7 +2,6 @@
 
 An advanced online coding platform and competitive programming judge built using the MERN stack with secure Docker-based code execution, BullMQ queue processing, Redis caching, and multi-language support.
 
----
 
 # Features
 
@@ -26,7 +25,7 @@ An advanced online coding platform and competitive programming judge built using
 * Docker-isolated execution environment
 * Scalable backend architecture
 
----
+
 
 # Tech Stack
 
@@ -52,14 +51,14 @@ An advanced online coding platform and competitive programming judge built using
 * BullMQ
 * Child Processes
 
----
+
 
 # Architecture Overview
 
 <img width="1693" height="929" alt="ChatGPT Image May 22, 2026, 08_30_02 PM" src="https://github.com/user-attachments/assets/56728c94-8e13-40ca-a5aa-4a7e3327d025" />
 
 
----
+
 
 # Submission Workflow
 
@@ -87,7 +86,7 @@ An advanced online coding platform and competitive programming judge built using
 11. Frontend polls and displays verdict
 ```
 
----
+
 
 # Why BullMQ + Redis?
 
@@ -100,7 +99,7 @@ Using BullMQ:
 * supports concurrent users,
 * improves scalability.
 
----
+
 
 # Why Docker?
 
@@ -114,7 +113,7 @@ Benefits:
 * CPU & memory restrictions
 * Timeout handling
 
----
+
 
 # Why Child Processes?
 
@@ -129,7 +128,7 @@ Child processes are used to:
 
 This allows the backend to interact with operating-system-level programs safely.
 
----
+
 
 # Supported Verdicts
 
@@ -139,7 +138,7 @@ This allows the backend to interact with operating-system-level programs safely.
 * Runtime Error
 * Time Limit Exceeded
 
----
+
 
 # Environment Variables
 
@@ -167,7 +166,7 @@ EXEC_CPU_LIMIT=0.5
 WORKER_CONCURRENCY=3
 ```
 
----
+
 
 # Installation
 
@@ -193,7 +192,7 @@ Start backend:
 npm run dev
 ```
 
----
+
 
 # Frontend Setup
 
@@ -203,7 +202,7 @@ npm install
 npm run dev
 ```
 
----
+
 
 # Redis Setup
 
@@ -213,7 +212,7 @@ Run Redis using Docker:
 docker run -d --name redis -p 6379:6379 redis
 ```
 
----
+
 
 # Docker Requirement
 
@@ -225,7 +224,7 @@ Verify Docker:
 docker ps
 ```
 
----
+
 
 # Folder Structure
 
@@ -252,7 +251,7 @@ CodeArena/
 └── README.md
 ```
 
----
+
 
 # Security Features
 
@@ -263,7 +262,7 @@ CodeArena/
 * Input validation
 * Queue-based execution isolation
 
----
+
 
 # Future Improvements
 
@@ -275,7 +274,7 @@ CodeArena/
 * Plagiarism detection
 * Multi-worker distributed execution
 
----
+
 
 # Key Learning Outcomes
 
@@ -289,7 +288,7 @@ This project demonstrates:
 * Distributed processing concepts
 * Real-world online judge architecture
 
----
+
 
 # Author
 
