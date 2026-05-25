@@ -52,8 +52,7 @@ An advanced online coding platform and competitive programming judge built using
 * Child Processes
 
 
-
-# Architecture Overview
+# Architecture Overview (Upcoming)
 
 <img width="1693" height="929" alt="ChatGPT Image May 22, 2026, 08_30_02 PM" src="https://github.com/user-attachments/assets/56728c94-8e13-40ca-a5aa-4a7e3327d025" />
 
